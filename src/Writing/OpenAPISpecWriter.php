@@ -272,7 +272,7 @@ class OpenAPISpecWriter
             } elseif (isset($responses[$response->status])) {
                 // If we already have a response for this status code and content type,
                 // we change to a `oneOf` which includes all the responses
-                $content = $this->generateResponseContentSpec($response->content, $endpoint);
+                $content = $this->generateResponseContentSpec($response, $endpoint);
                 $contentType = array_keys($content)[0];
                 if (isset($responses[$response->status]['content'][$contentType])) {
                     $newResponseExample = array_replace([
@@ -298,7 +298,7 @@ class OpenAPISpecWriter
                 // Store as the response for this status
                 $responses[$response->status] = [
                     'description' => $this->getResponseDescription($response),
-                    'content' => $this->generateResponseContentSpec($response->content, $endpoint),
+                    'content' => $this->generateResponseContentSpec($response, $endpoint),
                 ];
             }
         }
@@ -323,9 +323,9 @@ class OpenAPISpecWriter
         return $description;
     }
 
-    protected function generateResponseContentSpec(?string $responseContent, OutputEndpointData $endpoint)
+    protected function generateResponseContentSpec(Response $response, OutputEndpointData $endpoint)
     {
-        if (Str::startsWith($responseContent, '<<binary>>')) {
+        if (Str::startsWith($response->content, '<<binary>>')) {
             return [
                 'application/octet-stream' => [
                     'schema' => [
@@ -336,7 +336,7 @@ class OpenAPISpecWriter
             ];
         }
 
-        if ($responseContent === null) {
+        if ($response->content === null) {
             return [
                 'application/json' => [
                     'schema' => [
@@ -348,13 +348,13 @@ class OpenAPISpecWriter
             ];
         }
 
-        $decoded = json_decode($responseContent);
+        $decoded = json_decode($response->content);
         if ($decoded === null) { // Decoding failed, so we return the content string as is
             return [
                 'text/plain' => [
                     'schema' => [
                         'type' => 'string',
-                        'example' => $responseContent,
+                        'example' => $response->content,
                     ],
                 ],
             ];
@@ -408,13 +408,20 @@ class OpenAPISpecWriter
                     return [$key => $this->generateSchemaForValue($value, $endpoint, $key)];
                 })->toArray();
 
+                $schema = [
+                    'type' => 'object',
+                    'example' => $decoded,
+                    'properties' => $this->objectIfEmpty($properties),
+                ];
+
+                if ($response->name !== null) {
+                    $nameParts = explode('\\', $response->name);
+                    $schema['title'] = end($nameParts);
+                }
+
                 return [
                     'application/json' => [
-                        'schema' => [
-                            'type' => 'object',
-                            'example' => $decoded,
-                            'properties' => $this->objectIfEmpty($properties),
-                        ],
+                        'schema' => $schema,
                     ],
                 ];
         }

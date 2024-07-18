@@ -80,6 +80,7 @@ class UseResponseAttributes extends PhpAttributeStrategy
 
         return [
             'status' => $attributeInstance->status,
+            'name' => $attributeInstance->name,
             'description' => $attributeInstance->description,
             'content' => $content,
         ];
@@ -104,6 +105,7 @@ class UseResponseAttributes extends PhpAttributeStrategy
 
         return [
             'status' => $attributeInstance->status,
+            'name' => $attributeInstance->name,
             'description' => $attributeInstance->description,
             'content' => $content,
         ];

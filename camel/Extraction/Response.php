@@ -13,6 +13,8 @@ class Response extends BaseDTO
 
     public array $headers = [];
 
+    public ?string $name;
+
     public ?string $description;
 
     public function __construct(array $parameters = [])
