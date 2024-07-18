@@ -417,6 +417,10 @@ class OpenAPISpecWriter
                 if ($response->name !== null) {
                     $nameParts = explode('\\', $response->name);
                     $schema['title'] = end($nameParts);
+
+                    if (!!($response->collection)) {
+                        $schema['title'] .= 'Collection';
+                    }
                 }
 
                 return [

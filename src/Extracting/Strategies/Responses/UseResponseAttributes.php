@@ -82,6 +82,7 @@ class UseResponseAttributes extends PhpAttributeStrategy
             'status' => $attributeInstance->status,
             'name' => $attributeInstance->name,
             'description' => $attributeInstance->description,
+            'collection' => $attributeInstance->collection,
             'content' => $content,
         ];
     }
@@ -107,6 +108,7 @@ class UseResponseAttributes extends PhpAttributeStrategy
             'status' => $attributeInstance->status,
             'name' => $attributeInstance->name,
             'description' => $attributeInstance->description,
+            'collection' => $attributeInstance->collection,
             'content' => $content,
         ];
     }

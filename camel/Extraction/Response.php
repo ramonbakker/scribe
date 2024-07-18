@@ -9,6 +9,8 @@ class Response extends BaseDTO
 {
     public int $status;
 
+    public ?bool $collection;
+
     public ?string $content;
 
     public array $headers = [];
